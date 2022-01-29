@@ -368,8 +368,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inkPrefab: {fileID: 7397955589665146029, guid: 42f9d208c3143f54dbd5cdc6f3011edf, type: 3}
-  inkSpeedConstant: 20
-  speedConstant: 3
+  inkSpeedMin: 10
+  inkSpeedMax: 30
+  speedMin: 1.5
+  speedMax: 4.5
+  holdPowerRate: 0
+  holdMaxTime: 2
 --- !u!95 &313960034
 Animator:
   serializedVersion: 3
