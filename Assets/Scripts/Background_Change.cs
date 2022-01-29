@@ -23,4 +23,5 @@ public class Background_Change : MonoBehaviour
             transform.position = Startpostion;
         }
     }
+    
 }
