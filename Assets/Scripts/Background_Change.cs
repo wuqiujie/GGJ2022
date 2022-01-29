@@ -6,7 +6,7 @@ public class Background_Change : MonoBehaviour
 {
 
     [SerializeField] public float speed = 4f;
-    [SerializeField] public float end_y= -19f;
+    [SerializeField] public float end_y= 19f;
 
     private Vector2 Startpostion;
     void Start()
@@ -17,8 +17,8 @@ public class Background_Change : MonoBehaviour
 
     void Update()
     {
-        transform.Translate(Vector2.down * speed * Time.deltaTime);
-        if (transform.position.y < end_y)
+        transform.Translate(Vector2.up * speed * Time.deltaTime);
+        if (transform.position.y > end_y)
         {
             transform.position = Startpostion;
         }
