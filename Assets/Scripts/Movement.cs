@@ -23,10 +23,11 @@ public class Movement : MonoBehaviour
         get => inkStorage;
         set
         {
-            inkStorage = value;
+            inkStorage = Mathf.Clamp(value, 0, 1);
+            ForeseenInkStorage = inkStorage;
             inkStorageChangedEvent?.Invoke(this, new InkStorageChangedEventArgs
             {
-                inkStorage = value
+                inkStorage = inkStorage
             });
         }
     }
@@ -45,7 +46,7 @@ public class Movement : MonoBehaviour
         }
     }
     private float foreseenInkStorage = 1;
-
+    
     private event EventHandler<InkStorageChangedEventArgs> inkStorageChangedEvent, foreseenInkStorageChangedEvent;
     private event EventHandler inkInsufficientEvent;
     private float holdTime = 0;
@@ -69,6 +70,7 @@ public class Movement : MonoBehaviour
             inkStorageChangedEvent += uiInkStorage.OnInkStorageChanged;
             foreseenInkStorageChangedEvent += uiInkStorage.OnForeseenInkStorageChanged;
             inkInsufficientEvent += uiInkStorage.OnInkInsufficient;
+            GetComponentInChildren<SquidCollectingTrigger>().collectInkEvent += OnInkCollected;
         }
     }
 
@@ -171,6 +173,12 @@ public class Movement : MonoBehaviour
         }
 
         yield return null;
+    }
+
+    private void OnInkCollected(object sender, CollectInkEventArgs e)
+    {
+        InkStorage += e.inkAmount;
+        // TODO: play animation
     }
 }
 
