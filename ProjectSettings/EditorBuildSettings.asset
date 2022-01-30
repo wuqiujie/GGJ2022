@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Main.unity
     guid: 29fa13a213b794171bb38e5035ae7d88
   - enabled: 1
-    path: Assets/Scenes/End.unity
-    guid: b57730f77af134d638bb310ef669542d
+    path: Assets/Scenes/End_Lose.unity
+    guid: 333be457a3754444890f8b1769c144dc
+  - enabled: 1
+    path: Assets/Scenes/End_Win.unity
+    guid: f38d72f0a392b43d5abde4490e5a2f16
   m_configObjects: {}

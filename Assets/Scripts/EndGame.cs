@@ -9,7 +9,7 @@ public class EndGame : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            SceneManager.LoadScene("End");
+            SceneManager.LoadScene("End_Lose");
         }
     }
    
