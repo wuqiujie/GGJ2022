@@ -205,20 +205,20 @@ public class Movement : MonoBehaviour
             mob.hp -= 1;
             if (mob.hp == 0)
             {
-                Destroy(mob.gameObject);
+                
                 // TODO: particles, spread inks
-                for (var i = 0; i < 10; i++)
+                for (var i = 0; i < mob.inkDropNumber; i++)
                 {
                     var randDirTheta = Random.Range(0, Mathf.PI);
                     var randDir = new Vector2(Mathf.Cos(randDirTheta), Mathf.Sin(randDirTheta));
                     var randDir3 = new Vector3(randDir.x, randDir.y, 0);
                     var inkObject = Instantiate(inkCollectable, mob.transform.position + randDir3 * 0.5f, new Quaternion());
-                    var inkAmount = Random.Range(0.05f, 0.2f);
+                    var inkAmount = Random.Range(mob.inkAmountMin, mob.inkAmountMax); //Random.Range(0.05f, 0.2f);
                     inkObject.GetComponent<InkCollectable>().inkAmount = inkAmount;
                     inkObject.GetComponent<Rigidbody2D>().velocity = randDir * inkExplodeSpeedConstant * inkAmount;
 
                 }
-
+                Destroy(mob.gameObject);
                 var obj = Instantiate(explosionParticle, mob.transform.position, new Quaternion());
                 Destroy(obj, 1f);
             }
