@@ -10,8 +10,9 @@ public class UIInkStorage : MonoBehaviour
     [SerializeField] private Image bar;
 
     [SerializeField] private Image foreseenBar;
-
+    [SerializeField] private Image uiHarden;
     private Animator animator;
+    private bool squidIdle = true;
 
     private void Awake()
     {
@@ -43,6 +44,26 @@ public class UIInkStorage : MonoBehaviour
     public void OnInkInsufficient(object sender, EventArgs e)
     {
         animator.Play("UIInkWarn");
+    }
+
+    public void OnTransform(object sender, EventArgs e)
+    {
+        if (squidIdle)
+        {
+            uiHarden.enabled = true;
+            bar.enabled = false;
+            foreseenBar.enabled = false;
+            GetComponent<Image>().enabled = false;
+        }
+        else
+        {
+            uiHarden.enabled = false;
+            bar.enabled = true;
+            foreseenBar.enabled = true;
+            GetComponent<Image>().enabled = true;
+        }
+
+        squidIdle = !squidIdle;
     }
 }
 

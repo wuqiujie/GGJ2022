@@ -82,6 +82,7 @@ public class Movement : MonoBehaviour
             inkStorageChangedEvent += uiInkStorage.OnInkStorageChanged;
             foreseenInkStorageChangedEvent += uiInkStorage.OnForeseenInkStorageChanged;
             inkInsufficientEvent += uiInkStorage.OnInkInsufficient;
+            transformEventHandle += uiInkStorage.OnTransform;
             GetComponentInChildren<SquidCollectingTrigger>().collectInkEvent += OnInkCollected;
 
             if (SoundManager.Instance != null)
