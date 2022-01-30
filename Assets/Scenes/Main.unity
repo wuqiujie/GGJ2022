@@ -383,6 +383,7 @@ MonoBehaviour:
   IdlePhysicsMat: {fileID: 6200000, guid: ef2298fe8afb1f64098e77033976c733, type: 2}
   HardenPhysicsMat: {fileID: 6200000, guid: 8679a7d89331e7147ac987a8df2ae548, type: 2}
   uiInkStorage: {fileID: 1816955104}
+  transformCooldown: 0
 --- !u!95 &313960034
 Animator:
   serializedVersion: 3
