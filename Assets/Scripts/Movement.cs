@@ -149,7 +149,7 @@ public class Movement : MonoBehaviour
         yield return new WaitForSeconds(.25f);
         
         var ink = Instantiate(inkPrefab, transform.position - transform.up, transform.rotation);
-        ink.transform.localScale = ink.transform.localScale * Mathf.Lerp(1, 2, holdTime / holdMaxTime);
+        ink.transform.localScale *= Mathf.Lerp(1, 2, holdTime / holdMaxTime);
         var dir = new Vector2(transform.up.x, transform.up.y);
         ink.GetComponent<Rigidbody2D>().velocity -= dir * Mathf.Lerp(inkSpeedMin, inkSpeedMax, holdTime / holdMaxTime);
         
