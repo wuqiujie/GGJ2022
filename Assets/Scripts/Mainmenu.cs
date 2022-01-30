@@ -8,11 +8,14 @@ public class Mainmenu : MonoBehaviour
 
     public GameObject mainMenu;
     public GameObject tutorialMenu;
+    public GameObject Cartoon;
 
    public void playGame()
        
     {
-        SceneManager.LoadScene("Main");
+        // SceneManager.LoadScene("Main");
+        Cartoon.SetActive(true);
+        mainMenu.SetActive(false);
     }
 
     public void quitGame()

@@ -14,7 +14,7 @@ public class TutorialImgChange : MonoBehaviour
 
         
         if (j < 5) { j++; }
-        else
+        if(j==5)
         {
             j = 5;
             next.SetActive(false);
