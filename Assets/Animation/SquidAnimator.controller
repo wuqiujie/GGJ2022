@@ -33,7 +33,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: SquidTransform
-  m_Speed: 1
+  m_Speed: 5
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 8273172480897905019}
@@ -99,13 +99,13 @@ AnimatorStateMachine:
     m_Position: {x: 180, y: 340, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -8603492217348133427}
-    m_Position: {x: 400, y: 260, z: 0}
+    m_Position: {x: 370, y: 270, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -1416899857150907236}
     m_Position: {x: 570, y: 420, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -5709288846486545405}
-    m_Position: {x: 670, y: 260, z: 0}
+    m_Position: {x: 580, y: 210, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -149,7 +149,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: SquidTransformNormal
-  m_Speed: 1
+  m_Speed: 5
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -931710874034460454}

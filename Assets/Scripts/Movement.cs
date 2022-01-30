@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 
@@ -18,6 +19,10 @@ public class Movement : MonoBehaviour
     [SerializeField] private float holdMaxTime;
     [SerializeField] private PhysicsMaterial2D IdlePhysicsMat, HardenPhysicsMat;
     [SerializeField] private UIInkStorage uiInkStorage;
+
+    private bool transformCooling = false;
+    [SerializeField] private bool transformCooldown;
+    
     private float InkStorage
     {
         get => inkStorage;
@@ -77,9 +82,12 @@ public class Movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        transform.up = new Vector3(mousePos.x - transform.position.x, mousePos.y - transform.position.y, 0);
-
+        if (state != SquidState.HardIdle)
+        {
+            var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            transform.up = new Vector3(mousePos.x - transform.position.x, mousePos.y - transform.position.y, 0);
+        }
+        
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (state == SquidState.Idle)
@@ -109,7 +117,7 @@ public class Movement : MonoBehaviour
             StartCoroutine(Shoot());
         }
 
-        if (Input.GetKeyDown(KeyCode.F) && (state == SquidState.Idle || state == SquidState.HardIdle))
+        if (Input.GetKeyDown(KeyCode.F) && !transformCooling && (state == SquidState.Idle || state == SquidState.HardIdle))
         {
             StartCoroutine(TransformHard());
         }
@@ -153,23 +161,24 @@ public class Movement : MonoBehaviour
     private IEnumerator TransformHard()
     {
         animator.SetTrigger("Transform");
+        transformCooling = true;
         if (state == SquidState.Idle)
         {
             rigidbody2D.sharedMaterial = HardenPhysicsMat;
-            collider2D.sharedMaterial = HardenPhysicsMat;
+            GetComponent<Collider2D>().sharedMaterial = HardenPhysicsMat;
             rigidbody2D.drag = 0;
             rigidbody2D.gravityScale = 10;
-
             state = SquidState.HardIdle;
+            // yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("SquidHardIdle"));
         } else if (state == SquidState.HardIdle)
         {
             rigidbody2D.sharedMaterial = IdlePhysicsMat;
-            collider2D.sharedMaterial = IdlePhysicsMat;
+            GetComponent<Collider2D>().sharedMaterial = IdlePhysicsMat;
             rigidbody2D.drag = 1;
             rigidbody2D.gravityScale = 0.1f;
-
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"));
             state = SquidState.Idle;
-
+            transformCooling = false;
         }
 
         yield return null;
@@ -179,6 +188,14 @@ public class Movement : MonoBehaviour
     {
         InkStorage += e.inkAmount;
         // TODO: play animation
+    }
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (LayerMask.LayerToName(other.gameObject.layer) == "Env" || LayerMask.LayerToName(other.gameObject.layer) == "Monster");
+        {
+            transformCooling = false;
+        }
     }
 }
 
