@@ -21,7 +21,8 @@ public class SquidCollectingTrigger : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.GetComponent<InkCollectable>())
+        var c = other.gameObject.GetComponent<InkCollectable>();
+        if (c && c.collectable)
         {
             collectInkEvent?.Invoke(this, new  CollectInkEventArgs
             {

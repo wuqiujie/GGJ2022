@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using Unity.Mathematics;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 
 [RequireComponent(typeof(Animator))]
@@ -19,10 +21,10 @@ public class Movement : MonoBehaviour
     [SerializeField] private float holdMaxTime;
     [SerializeField] private PhysicsMaterial2D IdlePhysicsMat, HardenPhysicsMat;
     [SerializeField] private UIInkStorage uiInkStorage;
-
+    [SerializeField] private GameObject inkCollectable;
+    [SerializeField] private float inkExplodeSpeedConstant;
     private bool transformCooling = false;
-    [SerializeField] private bool transformCooldown;
-    
+    [SerializeField] private GameObject explosionParticle; 
     private float InkStorage
     {
         get => inkStorage;
@@ -192,9 +194,34 @@ public class Movement : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (LayerMask.LayerToName(other.gameObject.layer) == "Env" || LayerMask.LayerToName(other.gameObject.layer) == "Monster");
+        if (LayerMask.LayerToName(other.gameObject.layer) == "Env");
         {
             transformCooling = false;
+        }
+        if (LayerMask.LayerToName(other.gameObject.layer) == "Mob" && state == SquidState.HardIdle)
+        {
+            transformCooling = false;
+            var mob = other.gameObject.GetComponent<Mob>();
+            mob.hp -= 1;
+            if (mob.hp == 0)
+            {
+                Destroy(mob.gameObject);
+                // TODO: particles, spread inks
+                for (var i = 0; i < 10; i++)
+                {
+                    var randDirTheta = Random.Range(0, Mathf.PI);
+                    var randDir = new Vector2(Mathf.Cos(randDirTheta), Mathf.Sin(randDirTheta));
+                    var randDir3 = new Vector3(randDir.x, randDir.y, 0);
+                    var inkObject = Instantiate(inkCollectable, mob.transform.position + randDir3 * 0.5f, new Quaternion());
+                    var inkAmount = Random.Range(0.05f, 0.2f);
+                    inkObject.GetComponent<InkCollectable>().inkAmount = inkAmount;
+                    inkObject.GetComponent<Rigidbody2D>().velocity = randDir * inkExplodeSpeedConstant * inkAmount;
+
+                }
+
+                var obj = Instantiate(explosionParticle, mob.transform.position, new Quaternion());
+                Destroy(obj, 1f);
+            }
         }
     }
 }
