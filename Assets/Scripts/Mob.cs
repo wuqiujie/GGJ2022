@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Mob : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class Mob : MonoBehaviour
 
     [SerializeField] public float inkAmountMin, inkAmountMax;
     [SerializeField] public AudioClip hitSound;
+    [SerializeField] public UnityEvent onMobDies;
     public Animator animator;
 
     void Awake()

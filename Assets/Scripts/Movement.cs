@@ -236,7 +236,7 @@ public class Movement : MonoBehaviour
                 mobHitEventHandler?.Invoke(mob, EventArgs.Empty);
                 if (mob.hp == 0)
                 {
-
+                    mob.onMobDies?.Invoke();
                     // TODO: particles, spread inks
                     for (var i = 0; i < mob.inkDropNumber; i++)
                     {

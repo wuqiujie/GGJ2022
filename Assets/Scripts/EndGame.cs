@@ -12,5 +12,16 @@ public class EndGame : MonoBehaviour
             SceneManager.LoadScene("End_Lose");
         }
     }
-   
+
+    public void Win()
+    {
+        StartCoroutine(WinDelay());
+    }
+
+    public IEnumerator WinDelay()
+    {
+        GetComponent<Collider2D>().enabled = false;
+        yield return new WaitForSeconds(4);
+        SceneManager.LoadScene("End_Win");
+    }
 }
