@@ -20,7 +20,16 @@ public class Movement : MonoBehaviour
     [SerializeField] private GameObject inkCollectable;
     [SerializeField] private float inkExplodeSpeedConstant;
     private bool transformCooling = false;
-    [SerializeField] private GameObject explosionParticle; 
+    [SerializeField] private GameObject explosionParticle;
+
+    public event EventHandler shootEventHandler,
+        holdEventHandler,
+        absorbEventHandler,
+        transformEventHandle,
+        fallStartsEventHandler,
+        fallEndsEventHandler,
+        mobHitEventHandler; 
+    
     private float InkStorage
     {
         get => inkStorage;
@@ -74,6 +83,15 @@ public class Movement : MonoBehaviour
             foreseenInkStorageChangedEvent += uiInkStorage.OnForeseenInkStorageChanged;
             inkInsufficientEvent += uiInkStorage.OnInkInsufficient;
             GetComponentInChildren<SquidCollectingTrigger>().collectInkEvent += OnInkCollected;
+
+            shootEventHandler += SoundManager.Instance.OnShoot;
+            holdEventHandler += SoundManager.Instance.OnHold;
+            absorbEventHandler += SoundManager.Instance.OnAbsorbInk;
+            transformEventHandle += SoundManager.Instance.OnTransform;
+            fallStartsEventHandler += SoundManager.Instance.OnFallStarts;
+            fallEndsEventHandler += SoundManager.Instance.OnFallEnds;
+            mobHitEventHandler += SoundManager.Instance.OnMobHit;
+            inkInsufficientEvent += SoundManager.Instance.OnInkInsufficient;
         }
     }
 
@@ -125,6 +143,7 @@ public class Movement : MonoBehaviour
     {
         state = SquidState.Hold;
         animator.SetTrigger("Hold");
+        holdEventHandler?.Invoke(this, EventArgs.Empty);
         holdTime = 0f;
         var holdMaxTime = this.holdMaxTime * Mathf.Clamp(InkStorage / inkConsumptionMax, 0, 1);
         while (holdTime < holdMaxTime)
@@ -143,6 +162,7 @@ public class Movement : MonoBehaviour
         state = SquidState.Shoot;
         animator.SetTrigger("Shoot");
         yield return new WaitForSeconds(.25f);
+        shootEventHandler?.Invoke(this, EventArgs.Empty);
         
         var ink = Instantiate(inkPrefab, transform.position - transform.up, transform.rotation);
         ink.transform.localScale *= Mathf.Lerp(1, 2, holdTime / holdMaxTime);
@@ -167,6 +187,8 @@ public class Movement : MonoBehaviour
             rigidbody2D.drag = 0;
             rigidbody2D.gravityScale = 5;
             state = SquidState.HardIdle;
+            transformEventHandle?.Invoke(this, EventArgs.Empty);
+            fallStartsEventHandler?.Invoke(this, EventArgs.Empty);
             // yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("SquidHardIdle"));
         } else if (state == SquidState.HardIdle)
         {
@@ -174,6 +196,8 @@ public class Movement : MonoBehaviour
             GetComponent<Collider2D>().sharedMaterial = IdlePhysicsMat;
             rigidbody2D.drag = 1;
             rigidbody2D.gravityScale = 0.1f;
+            transformEventHandle?.Invoke(this, EventArgs.Empty);
+
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"));
             state = SquidState.Idle;
             transformCooling = false;
@@ -185,39 +209,47 @@ public class Movement : MonoBehaviour
     private void OnInkCollected(object sender, CollectInkEventArgs e)
     {
         InkStorage += e.inkAmount;
+        absorbEventHandler?.Invoke(this, EventArgs.Empty);
         // TODO: play animation
     }
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (LayerMask.LayerToName(other.gameObject.layer) == "Env");
+        if (state == SquidState.HardIdle)
         {
-            transformCooling = false;
-        }
-        if (LayerMask.LayerToName(other.gameObject.layer) == "Mob" && state == SquidState.HardIdle)
-        {
-            transformCooling = false;
-            var mob = other.gameObject.GetComponent<Mob>();
-            mob.hp -= 1;
-            mob.animator.SetTrigger("Hit");
-            if (mob.hp == 0)
+            var layerName = LayerMask.LayerToName(other.gameObject.layer);
+ 
+            if (layerName == "Env" || layerName == "Mob") ;
             {
-                
-                // TODO: particles, spread inks
-                for (var i = 0; i < mob.inkDropNumber; i++)
+                transformCooling = false;
+                fallEndsEventHandler?.Invoke(this, EventArgs.Empty);
+            }
+            if (layerName == "Mob")
+            {
+                var mob = other.gameObject.GetComponent<Mob>();
+                mob.hp -= 1;
+                mob.animator.SetTrigger("Hit");
+                mobHitEventHandler?.Invoke(mob, EventArgs.Empty);
+                if (mob.hp == 0)
                 {
-                    var randDirTheta = Random.Range(0, Mathf.PI);
-                    var randDir = new Vector2(Mathf.Cos(randDirTheta), Mathf.Sin(randDirTheta));
-                    var randDir3 = new Vector3(randDir.x, randDir.y, 0);
-                    var inkObject = Instantiate(inkCollectable, mob.transform.position + randDir3 * 0.5f, new Quaternion());
-                    var inkAmount = Random.Range(mob.inkAmountMin, mob.inkAmountMax); //Random.Range(0.05f, 0.2f);
-                    inkObject.GetComponent<InkCollectable>().inkAmount = inkAmount;
-                    inkObject.GetComponent<Rigidbody2D>().velocity = randDir * inkExplodeSpeedConstant * inkAmount;
 
+                    // TODO: particles, spread inks
+                    for (var i = 0; i < mob.inkDropNumber; i++)
+                    {
+                        var randDirTheta = Random.Range(0, Mathf.PI);
+                        var randDir = new Vector2(Mathf.Cos(randDirTheta), Mathf.Sin(randDirTheta));
+                        var randDir3 = new Vector3(randDir.x, randDir.y, 0);
+                        var inkObject = Instantiate(inkCollectable, mob.transform.position + randDir3 * 0.5f,
+                            new Quaternion());
+                        var inkAmount = Random.Range(mob.inkAmountMin, mob.inkAmountMax); //Random.Range(0.05f, 0.2f);
+                        inkObject.GetComponent<InkCollectable>().inkAmount = inkAmount;
+                        inkObject.GetComponent<Rigidbody2D>().velocity = randDir * inkExplodeSpeedConstant * inkAmount;
+                    }
+
+                    Destroy(mob.gameObject);
+                    var obj = Instantiate(explosionParticle, mob.transform.position, new Quaternion());
+                    Destroy(obj, 1f);
                 }
-                Destroy(mob.gameObject);
-                var obj = Instantiate(explosionParticle, mob.transform.position, new Quaternion());
-                Destroy(obj, 1f);
             }
         }
     }

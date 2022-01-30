@@ -10,7 +10,7 @@ public class Mob : MonoBehaviour
     [SerializeField] public int inkDropNumber;
 
     [SerializeField] public float inkAmountMin, inkAmountMax;
-
+    [SerializeField] public AudioClip hitSound;
     public Animator animator;
 
     void Awake()
