@@ -7,7 +7,6 @@ public class SoundManager : MonoBehaviour
     public static SoundManager Instance;
     [SerializeField] private AudioSource squidAudioSource;
     [SerializeField] private AudioSource fallAudioSource;
-    [SerializeField] private AudioSource bgmAudioSource;
     [SerializeField] private AudioClip holdSound, transformSound, fallStartSound, bgmClip;
     [SerializeField] private AudioClip[] shootSounds, inkInsufficientSounds, absorbSounds;
     private void Awake()
@@ -19,9 +18,7 @@ public class SoundManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        bgmAudioSource.clip = bgmClip;
-        bgmAudioSource.loop = true;
-        bgmAudioSource.Play();
+
     }
 
     // Update is called once per frame

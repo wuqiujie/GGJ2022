@@ -84,14 +84,17 @@ public class Movement : MonoBehaviour
             inkInsufficientEvent += uiInkStorage.OnInkInsufficient;
             GetComponentInChildren<SquidCollectingTrigger>().collectInkEvent += OnInkCollected;
 
-            shootEventHandler += SoundManager.Instance.OnShoot;
-            holdEventHandler += SoundManager.Instance.OnHold;
-            absorbEventHandler += SoundManager.Instance.OnAbsorbInk;
-            transformEventHandle += SoundManager.Instance.OnTransform;
-            fallStartsEventHandler += SoundManager.Instance.OnFallStarts;
-            fallEndsEventHandler += SoundManager.Instance.OnFallEnds;
-            mobHitEventHandler += SoundManager.Instance.OnMobHit;
-            inkInsufficientEvent += SoundManager.Instance.OnInkInsufficient;
+            if (SoundManager.Instance != null)
+            {
+                shootEventHandler += SoundManager.Instance.OnShoot;
+                holdEventHandler += SoundManager.Instance.OnHold;
+                absorbEventHandler += SoundManager.Instance.OnAbsorbInk;
+                transformEventHandle += SoundManager.Instance.OnTransform;
+                fallStartsEventHandler += SoundManager.Instance.OnFallStarts;
+                fallEndsEventHandler += SoundManager.Instance.OnFallEnds;
+                mobHitEventHandler += SoundManager.Instance.OnMobHit;
+                inkInsufficientEvent += SoundManager.Instance.OnInkInsufficient;
+            }
         }
     }
 
