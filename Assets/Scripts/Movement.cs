@@ -192,9 +192,20 @@ public class Movement : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (LayerMask.LayerToName(other.gameObject.layer) == "Env" || LayerMask.LayerToName(other.gameObject.layer) == "Monster");
+        if (LayerMask.LayerToName(other.gameObject.layer) == "Env");
         {
             transformCooling = false;
+        }
+        if (LayerMask.LayerToName(other.gameObject.layer) == "Mob" && state == SquidState.HardIdle)
+        {
+            transformCooling = false;
+            var mob = other.gameObject.GetComponent<Mob>();
+            mob.hp -= 1;
+            if (mob.hp == 0)
+            {
+                Destroy(mob.gameObject);
+                // TODO: particles, spread inks
+            }
         }
     }
 }
