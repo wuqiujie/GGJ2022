@@ -22,14 +22,17 @@ public class Movement : MonoBehaviour
     private bool transformCooling = false;
     [SerializeField] private GameObject explosionParticle;
 
-    public event EventHandler shootEventHandler,
+    public event EventHandler 
         holdEventHandler,
         absorbEventHandler,
-        transformEventHandle,
         fallStartsEventHandler,
         fallEndsEventHandler,
-        mobHitEventHandler; 
-    
+        mobHitEventHandler,
+        mobKilledEventHandler;
+
+    public event EventHandler<ShooEventArgs> shootEventHandler;
+    public event EventHandler<TransformEventArgs> transformEventHandler;
+
     private float InkStorage
     {
         get => inkStorage;
@@ -82,7 +85,7 @@ public class Movement : MonoBehaviour
             inkStorageChangedEvent += uiInkStorage.OnInkStorageChanged;
             foreseenInkStorageChangedEvent += uiInkStorage.OnForeseenInkStorageChanged;
             inkInsufficientEvent += uiInkStorage.OnInkInsufficient;
-            transformEventHandle += uiInkStorage.OnTransform;
+            transformEventHandler += uiInkStorage.OnTransform;
             GetComponentInChildren<SquidCollectingTrigger>().collectInkEvent += OnInkCollected;
 
             if (SoundManager.Instance != null)
@@ -90,10 +93,12 @@ public class Movement : MonoBehaviour
                 shootEventHandler += SoundManager.Instance.OnShoot;
                 holdEventHandler += SoundManager.Instance.OnHold;
                 absorbEventHandler += SoundManager.Instance.OnAbsorbInk;
-                transformEventHandle += SoundManager.Instance.OnTransform;
+                transformEventHandler += SoundManager.Instance.OnTransform;
                 fallStartsEventHandler += SoundManager.Instance.OnFallStarts;
                 fallEndsEventHandler += SoundManager.Instance.OnFallEnds;
                 mobHitEventHandler += SoundManager.Instance.OnMobHit;
+                mobKilledEventHandler += SoundManager.Instance.OnMobKilled;
+
                 inkInsufficientEvent += SoundManager.Instance.OnInkInsufficient;
             }
         }
@@ -166,7 +171,7 @@ public class Movement : MonoBehaviour
         state = SquidState.Shoot;
         animator.SetTrigger("Shoot");
         yield return new WaitForSeconds(.25f);
-        shootEventHandler?.Invoke(this, EventArgs.Empty);
+        shootEventHandler?.Invoke(this, new ShooEventArgs{holdRate = holdTime / holdMaxTime});
         
         var ink = Instantiate(inkPrefab, transform.position - transform.up, transform.rotation);
         ink.transform.localScale *= Mathf.Lerp(1, 2, holdTime / holdMaxTime);
@@ -191,7 +196,7 @@ public class Movement : MonoBehaviour
             rigidbody2D.drag = 0;
             rigidbody2D.gravityScale = 5;
             state = SquidState.HardIdle;
-            transformEventHandle?.Invoke(this, EventArgs.Empty);
+            transformEventHandler?.Invoke(this, new TransformEventArgs{ToHarden = true});
             fallStartsEventHandler?.Invoke(this, EventArgs.Empty);
             // yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("SquidHardIdle"));
         } else if (state == SquidState.HardIdle)
@@ -200,7 +205,8 @@ public class Movement : MonoBehaviour
             GetComponent<Collider2D>().sharedMaterial = IdlePhysicsMat;
             rigidbody2D.drag = 1;
             rigidbody2D.gravityScale = 0.1f;
-            transformEventHandle?.Invoke(this, EventArgs.Empty);
+            transformEventHandler?.Invoke(this, new TransformEventArgs{ToHarden = false});
+
 
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"));
             state = SquidState.Idle;
@@ -237,6 +243,7 @@ public class Movement : MonoBehaviour
                 if (mob.hp == 0)
                 {
                     mob.onMobDies?.Invoke();
+                    mobKilledEventHandler?.Invoke(mob, EventArgs.Empty);
                     // TODO: particles, spread inks
                     for (var i = 0; i < mob.inkDropNumber; i++)
                     {
@@ -257,6 +264,16 @@ public class Movement : MonoBehaviour
             }
         }
     }
+}
+
+public class ShooEventArgs : EventArgs
+{
+    public float holdRate;
+}
+
+public class TransformEventArgs : EventArgs
+{
+    public bool ToHarden;
 }
 
 enum SquidState

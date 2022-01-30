@@ -1,5 +1,7 @@
 using System;
+using UnityEditor;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 
 public class SoundManager : MonoBehaviour
@@ -8,7 +10,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioSource squidAudioSource;
     [SerializeField] private AudioSource fallAudioSource;
     [SerializeField] private AudioClip holdSound, transformSound, fallStartSound, bgmClip;
-    [SerializeField] private AudioClip[] shootSounds, inkInsufficientSounds, absorbSounds;
+    [SerializeField] private AudioClip[] shootStrongSounds, shootNormalSounds, inkInsufficientSounds, absorbSounds;
     private void Awake()
     {
         Instance = this;
@@ -27,9 +29,11 @@ public class SoundManager : MonoBehaviour
         
     }
 
-    public void OnShoot(object sender, EventArgs e)
+    public void OnShoot(object sender, ShooEventArgs e)
     {
-        squidAudioSource.PlayOneShot(shootSounds[UnityEngine.Random.Range(0, shootSounds.Length)]);
+        squidAudioSource.PlayOneShot(e.holdRate > 0.7
+            ? shootStrongSounds[UnityEngine.Random.Range(0, shootStrongSounds.Length)]
+            : shootNormalSounds[UnityEngine.Random.Range(0, shootNormalSounds.Length)]);
     }
 
     public void OnHold(object sender, EventArgs e)
@@ -43,8 +47,9 @@ public class SoundManager : MonoBehaviour
         squidAudioSource.PlayOneShot(absorbSounds[UnityEngine.Random.Range(0, absorbSounds.Length)]);
     }
     
-    public void OnTransform(object sender, EventArgs e)
+    public void OnTransform(object sender, TransformEventArgs e)
     {
+        if (e.ToHarden != true) return;
         squidAudioSource.Stop();
         squidAudioSource.PlayOneShot(transformSound);
     }
@@ -62,7 +67,15 @@ public class SoundManager : MonoBehaviour
     public void OnMobHit(object mob, EventArgs e)
     {
         var mmob = (Mob) mob;
-        squidAudioSource.PlayOneShot(mmob.hitSound);
+        if (mmob.hitSounds.Length == 0) return; 
+        squidAudioSource.PlayOneShot(mmob.hitSounds[Random.Range(0, mmob.hitSounds.Length)]);
+    }
+
+    public void OnMobKilled(object mob, EventArgs e)
+    {
+        var mmob = (Mob) mob;
+        if (mmob.killedSound == null) return;
+        squidAudioSource.PlayOneShot(mmob.killedSound);
     }
 
     public void OnChrisHit(object sender, EventArgs e)

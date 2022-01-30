@@ -46,7 +46,7 @@ public class UIInkStorage : MonoBehaviour
         animator.Play("UIInkWarn");
     }
 
-    public void OnTransform(object sender, EventArgs e)
+    public void OnTransform(object sender, TransformEventArgs e)
     {
         if (squidIdle)
         {

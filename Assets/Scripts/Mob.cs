@@ -11,7 +11,8 @@ public class Mob : MonoBehaviour
     [SerializeField] public int inkDropNumber;
 
     [SerializeField] public float inkAmountMin, inkAmountMax;
-    [SerializeField] public AudioClip hitSound;
+    [SerializeField] public AudioClip[] hitSounds;
+    [SerializeField] public AudioClip killedSound;
     [SerializeField] public UnityEvent onMobDies;
     public Animator animator;
 
