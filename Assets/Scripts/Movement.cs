@@ -165,7 +165,7 @@ public class Movement : MonoBehaviour
             rigidbody2D.sharedMaterial = HardenPhysicsMat;
             GetComponent<Collider2D>().sharedMaterial = HardenPhysicsMat;
             rigidbody2D.drag = 0;
-            rigidbody2D.gravityScale = 10;
+            rigidbody2D.gravityScale = 5;
             state = SquidState.HardIdle;
             // yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("SquidHardIdle"));
         } else if (state == SquidState.HardIdle)
