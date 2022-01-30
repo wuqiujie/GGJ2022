@@ -10,10 +10,17 @@ public class Mob : MonoBehaviour
     [SerializeField] public int inkDropNumber;
 
     [SerializeField] public float inkAmountMin, inkAmountMax;
+
+    public Animator animator;
+
+    void Awake()
+    {
+        animator = GetComponent<Animator>();
+    }
+    
     // Start is called before the first frame update
     void Start()
     {
-        
     }
 
     // Update is called once per frame

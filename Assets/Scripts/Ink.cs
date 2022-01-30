@@ -33,17 +33,20 @@ public class Ink : MonoBehaviour
         var time = 0f;
         var spriteRenderer = GetComponent<SpriteRenderer>();      
         var color = spriteRenderer.color;
+        
+        Destroy(GetComponent<Rigidbody2D>(), 1);
+        Destroy(GetComponent<Collider2D>(), 1);
         while (time <= fadeOutTime)
         {
-            color.a = Mathf.Lerp(1, fadeOutDest, time / fadeOutTime);
+            // color.a = Mathf.Lerp(1, fadeOutDest, time / fadeOutTime);
+            color.a = (1 - fadeOutDest) / (time + 1) + fadeOutDest;
             spriteRenderer.color = color;
-            transform.localScale = originalScale * Mathf.Lerp(1, scaleUpRate, time / fadeOutTime);
+            // transform.localScale = originalScale * Mathf.Lerp(1, scaleUpRate, time / fadeOutTime);
+            transform.localScale = originalScale * ((1 - scaleUpRate) / (time + 1) + scaleUpRate);
             time += Time.deltaTime;
             yield return null;
         }
 
-        Destroy(GetComponent<Rigidbody2D>());
-        Destroy(GetComponent<Collider2D>());
 
     }
 }

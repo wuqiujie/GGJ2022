@@ -199,6 +199,7 @@ public class Movement : MonoBehaviour
             transformCooling = false;
             var mob = other.gameObject.GetComponent<Mob>();
             mob.hp -= 1;
+            mob.animator.SetTrigger("Hit");
             if (mob.hp == 0)
             {
                 
