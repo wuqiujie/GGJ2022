@@ -207,7 +207,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 109265985}
-        m_TargetAssemblyTypeName: Mainmenu, Assembly-CSharp
+        m_TargetAssemblyTypeName: endMenu, Assembly-CSharp
         m_MethodName: quitGame
         m_Mode: 1
         m_Arguments:
@@ -265,11 +265,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 109265980}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66f44f793618d4c5d9b418db569faccf, type: 3}
+  m_Script: {fileID: 11500000, guid: 85cbc36d95d314515bd9fa758574d9d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainMenu: {fileID: 0}
-  tutorialMenu: {fileID: 0}
 --- !u!1 &639905017
 GameObject:
   m_ObjectHideFlags: 0
@@ -489,8 +487,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 903598213}
-        m_TargetAssemblyTypeName: Mainmenu, Assembly-CSharp
-        m_MethodName: playGame
+        m_TargetAssemblyTypeName: endMenu, Assembly-CSharp
+        m_MethodName: restartGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -547,11 +545,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 903598208}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66f44f793618d4c5d9b418db569faccf, type: 3}
+  m_Script: {fileID: 11500000, guid: 85cbc36d95d314515bd9fa758574d9d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainMenu: {fileID: 0}
-  tutorialMenu: {fileID: 0}
 --- !u!1 &994360121
 GameObject:
   m_ObjectHideFlags: 0
