@@ -20,7 +20,8 @@ public class SquidVacuum : MonoBehaviour
 
     void OnTriggerStay2D(Collider2D collider)
     {
-        if (collider.GetComponent<InkCollectable>())
+        var c = collider.gameObject.GetComponent<InkCollectable>();
+        if (c && c.collectable)
         {
             var dir3 = transform.position - collider.transform.position;
             var dir = new Vector2(dir3.x, dir3.y);
